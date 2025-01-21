@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ProyectoNuevoBD3H</string>
+    <string name="titulo">Peliculas</string>
+    <string name="inicio">Peliculas</string>
+    <string name="insertar">Insertar Puntuacion</string>
+    <string name="actualizar">Actualizar puntuacion</string>
+</resources>
