@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
 }
 
 android {
@@ -63,6 +64,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation)
     implementation(libs.androidx.viewmodel)
+    implementation(libs.squareup.retrofit2)
+    implementation(libs.jetbrains.kotlinx.serialization)
+    implementation(libs.jakewharton.retrofit)
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation(libs.squareup.okhttp3)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

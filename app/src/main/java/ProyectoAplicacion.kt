@@ -1,10 +1,9 @@
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.proyectonuevobd3h.PeliculasViewModel
+import com.example.proyectonuevobd3h.ui.PeliculasViewModel
 import com.example.proyectonuevobd3h.R
 
 enum class Pantallas(@StringRes val titulo :Int){
