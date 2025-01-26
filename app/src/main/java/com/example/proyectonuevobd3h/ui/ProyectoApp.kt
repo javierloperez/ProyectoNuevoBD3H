@@ -57,6 +57,7 @@ fun ProyectoApp(
         ) { innerPadding ->
 
         val uiState = viewModel.peliculasUiState
+        val uiStatePuntuaciones = viewModel.puntuacionesUIState
 
         NavHost(
             navController = navController,
@@ -80,9 +81,10 @@ fun ProyectoApp(
                 PantallaInicio(
                     appUIState = uiState,
                     onPeliculasObtenidas = { viewModel.obtenerPeliculas() },
-                    onVerPelicula = {
-                        viewModel.actualizarPelicula(it.id, it)
-                    },
+                    onBuscarPuntuacion = { viewModel.obtenerPuntuacion(it) },
+                    puntuacionObtenida = viewModel.puntuacionPulsada,
+                    onPuntuacionActualizada = { viewModel.actualizarPuntuacionPulsada(it) },
+                    onVerPelicula = {viewModel.actualizarPeliculaPulsada(it)},
                     modifier = Modifier
                         .fillMaxSize()
                 )

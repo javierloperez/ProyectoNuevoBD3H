@@ -21,16 +21,29 @@ import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface PeliculasUIState {
-    data class ObtenerExitoPuntuacion(val puntuacionPelis: PuntuacionPeliculas) : PeliculasUIState
+
     data class ObtenerExitoPeliculas(val peliculas: List<Peliculas>) : PeliculasUIState
     data class ActualizarExitoPelicula(val peliculas: Peliculas) : PeliculasUIState
     data class ObtenerExitoUsuario(val usuario: List<Usuario>) : PeliculasUIState
+
 
     object CrearExito : PeliculasUIState
     object ActualizarExito : PeliculasUIState
     object Error : PeliculasUIState
     object Cargando : PeliculasUIState
     object EliminarExito : PeliculasUIState
+}
+
+sealed interface PuntuacionesUIState {
+
+
+    data class ObtenerExitoPuntuacion(val puntuacionPelis: PuntuacionPeliculas) :
+        PuntuacionesUIState
+
+    object CrearExito : PuntuacionesUIState
+    object ActualizarExito : PuntuacionesUIState
+    object Error : PuntuacionesUIState
+    object Cargando : PuntuacionesUIState
 }
 
 class PeliculasViewModel(
@@ -42,18 +55,32 @@ class PeliculasViewModel(
     var peliculasUiState: PeliculasUIState by mutableStateOf(PeliculasUIState.Cargando)
         private set
 
-    var puntuacionPulsada: PuntuacionPeliculas by mutableStateOf(PuntuacionPeliculas(0, 0.0))
+    var puntuacionesUIState: PuntuacionesUIState by mutableStateOf(PuntuacionesUIState.Cargando)
+        private set
+
+    var puntuacionPulsada: PuntuacionPeliculas by mutableStateOf(PuntuacionPeliculas("", 0.0))
         private set
 
     var peliculaPulsada: Peliculas by mutableStateOf(Peliculas("", "", "", "", "", 0))
         private set
 
-    fun actualizarPeliculaPulsada(peliculas: Peliculas) {
-        peliculaPulsada = peliculas
+    fun actualizarPeliculaPulsada(visualizaciones:Int) {
+        peliculaPulsada = peliculaPulsada.copy(
+            visualizaciones = visualizaciones
+        )
+        actualizarPelicula(peliculaPulsada.id,peliculaPulsada)
+    }
+
+    fun actualizarPuntuacionPulsada(puntuacion: Double) {
+        puntuacionPulsada = puntuacionPulsada.copy(
+            puntuacion = puntuacion
+        )
+        actualizarPuntuacion(puntuacionPulsada)
     }
 
     init {
         obtenerUsuario()
+
     }
 
     fun obtenerPeliculas() {
@@ -101,35 +128,34 @@ class PeliculasViewModel(
 
     fun obtenerPuntuacion(id: String) {
         viewModelScope.launch {
-            peliculasUiState = try {
+            puntuacionesUIState = try {
                 val puntuacion = puntuacionRepositorio.obtenerPuntuacion(id)
                 puntuacionPulsada = puntuacion
-                PeliculasUIState.ObtenerExitoPuntuacion(puntuacion)
+                PuntuacionesUIState.ObtenerExitoPuntuacion(puntuacion)
             } catch (e: Exception) {
-                PeliculasUIState.Error
+                val puntuacionNueva = PuntuacionPeliculas(
+                    id,
+                    0.0
+                )
+                puntuacionRepositorio.insertarPuntuacion(
+                    puntuacionPelis = puntuacionNueva
+                )
+                puntuacionPulsada = puntuacionNueva
+                PuntuacionesUIState.ObtenerExitoPuntuacion(puntuacionNueva)
+
             }
 
         }
     }
 
-    fun insertarPuntuacion(puntuacionPelis: PuntuacionPeliculas) {
-        viewModelScope.launch {
-            peliculasUiState = try {
-                puntuacionRepositorio.insertarPuntuacion(puntuacionPelis)
-                PeliculasUIState.CrearExito
-            } catch (e: Exception) {
-                PeliculasUIState.Error
-            }
-        }
-    }
 
     fun actualizarPuntuacion(puntuacionPelis: PuntuacionPeliculas) {
         viewModelScope.launch {
-            peliculasUiState = try {
+            puntuacionesUIState = try {
                 puntuacionRepositorio.actualizarPuntuacion(puntuacionPelis)
-                PeliculasUIState.ActualizarExito
+                PuntuacionesUIState.ActualizarExito
             } catch (e: Exception) {
-                PeliculasUIState.Error
+                PuntuacionesUIState.Error
             }
         }
 

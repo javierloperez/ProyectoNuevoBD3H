@@ -40,26 +40,43 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.proyectonuevobd3h.R
 import com.example.proyectonuevobd3h.modelo.Peliculas
+import com.example.proyectonuevobd3h.modelo.PuntuacionPeliculas
 import com.example.proyectonuevobd3h.ui.PeliculasUIState
+
 
 @Composable
 fun PantallaInicio(
     appUIState: PeliculasUIState,
     onPeliculasObtenidas: () -> Unit,
     modifier: Modifier = Modifier,
-    onVerPelicula: (Peliculas) -> Unit
+    onVerPelicula: (Int) -> Unit,
+    onBuscarPuntuacion: (String) -> Unit,
+    puntuacionObtenida: PuntuacionPeliculas,
+    onPuntuacionActualizada: (Double) -> Unit,
 ) {
+
+
     when (appUIState) {
         is PeliculasUIState.Cargando -> PantallaCargando(modifier = modifier.fillMaxSize())
         is PeliculasUIState.Error -> PantallaError(modifier = modifier.fillMaxWidth())
-        is PeliculasUIState.ObtenerExitoPeliculas -> PantallaListarPeliculas(
-            lista = appUIState.peliculas,
-            onVerPelicula = onVerPelicula,
-            modifier = Modifier.fillMaxWidth(),
-        )
+
+        is PeliculasUIState.ObtenerExitoPeliculas -> {
+            PantallaListarPeliculas(
+                puntuacionObtenida = puntuacionObtenida,
+                onPuntuacionActualizada = onPuntuacionActualizada,
+                onBuscarPuntuacion = onBuscarPuntuacion,
+                listaPeliculas = appUIState.peliculas,
+                onVerPelicula = onVerPelicula,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+        }
+
         is PeliculasUIState.ObtenerExitoUsuario -> onPeliculasObtenidas()
         is PeliculasUIState.ActualizarExitoPelicula -> onPeliculasObtenidas()
-        else->{}
+        else -> {
+            onPeliculasObtenidas()
+        }
     }
 }
 
@@ -85,20 +102,23 @@ fun PantallaError(modifier: Modifier) {
 @Composable
 fun PantallaListarPeliculas(
     modifier: Modifier,
-    lista: List<Peliculas>,
-    onVerPelicula: (Peliculas) -> Unit,
-) {
+    listaPeliculas: List<Peliculas>,
+    onVerPelicula: (Int) -> Unit,
+    onBuscarPuntuacion: (String) -> Unit,
+    puntuacionObtenida: PuntuacionPeliculas,
+    onPuntuacionActualizada: (Double) -> Unit,
 
-    var puntuacion by remember { mutableStateOf(0) }
+    ) {
+
     var despliegue by remember { mutableStateOf(false) }
-    var peliculaElegida by remember { mutableStateOf(lista.get(0)) }
+    var peliculaElegida by remember { mutableStateOf(listaPeliculas.get(0)) }
     Column(modifier = modifier) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
         ) {
-            items(lista) {
+            items(listaPeliculas) {
                 Box(
                     modifier = Modifier
                         .width(200.dp)
@@ -108,6 +128,7 @@ fun PantallaListarPeliculas(
                         .clickable {
                             peliculaElegida = it
                             despliegue = true
+                            onBuscarPuntuacion(it.id)
                         }
                 ) {
                     AsyncImage(
@@ -125,12 +146,13 @@ fun PantallaListarPeliculas(
             dialogo(
                 pelicula = peliculaElegida,
                 abrirDialogo = true,
-                puntuacion = puntuacion,
+                puntuacion = puntuacionObtenida,
                 onVerPelicula = onVerPelicula,
-                onPuntuacionCambiada = {puntuacion = it}
+                onPuntuacionCambiada = onPuntuacionActualizada
             )
-
         }
+
+
     }
 }
 
@@ -139,11 +161,11 @@ fun PantallaListarPeliculas(
 fun dialogo(
     pelicula: Peliculas,
     abrirDialogo: Boolean,
-    puntuacion: Int,
-    onPuntuacionCambiada: (Int) -> Unit,
-    onVerPelicula: (Peliculas) -> Unit
+    puntuacion: PuntuacionPeliculas,
+    onPuntuacionCambiada: (Double) -> Unit,
+    onVerPelicula: (Int) -> Unit,
 ) {
-    val maxPuntuacion:Int = 5
+    val maxPuntuacion: Int = 5
 
 
     if (abrirDialogo) {
@@ -187,36 +209,60 @@ fun dialogo(
                         .height(8.dp)
                 )
 
-                Text(
-                    text = stringResource(R.string.visualizaciones)+": "+pelicula.visualizaciones,
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
-                        .padding(10.dp)
-                )
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(R.string.visualizaciones) + ": " + pelicula.visualizaciones,
+                        modifier = Modifier
+                            .padding(10.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.puntuacion) + ": " + puntuacion.puntuacion,
+                        modifier = Modifier
+                            .padding(10.dp)
+                    )
+                }
+
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
                     TextButton(onClick = {
-                        pelicula.visualizaciones+=1
-                        onVerPelicula(pelicula)
+                        onVerPelicula(pelicula.visualizaciones + 1)
                     }) {
                         Text(stringResource(R.string.ver))
                     }
                     Row {
                         for (i in 1..maxPuntuacion) {
+                            val starType = when {
+                                i <= puntuacion.puntuacion.toInt() -> Icons.Filled.Star
+                                i - 0.5 <= puntuacion.puntuacion && puntuacion.puntuacion < i -> Icons.Filled.Star
+                                else -> Icons.Outlined.Star
+                            }
+
+                            val starTint = when {
+                                i <= puntuacion.puntuacion.toInt() -> Color.Yellow
+                                i - 0.5 <= puntuacion.puntuacion && puntuacion.puntuacion < i -> Color.Yellow
+                                else -> Color.Gray
+                            }
+
                             Icon(
-                                imageVector = if (i <= puntuacion) Icons.Filled.Star else Icons.Outlined.Star,
+                                imageVector = starType,
                                 contentDescription = "Estrella $i",
                                 modifier = Modifier
                                     .padding(4.dp)
                                     .clickable {
-                                        onPuntuacionCambiada(i)
+                                        onPuntuacionCambiada(i.toDouble())
                                     },
-                                tint = if (i <= puntuacion) Color.Yellow else Color.Gray
+                                tint = starTint
                             )
                         }
                     }
+
                 }
             }
         }

@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "PuntuacionPeliculas")
-class PuntuacionPeliculas(
+data class PuntuacionPeliculas(
     @PrimaryKey(autoGenerate = false)
-    val id: Int = 0,
+    val id: String = "",
     val puntuacion: Double = 0.0
 
 )

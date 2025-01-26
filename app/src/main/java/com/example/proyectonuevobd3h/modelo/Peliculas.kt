@@ -18,5 +18,5 @@ data class Peliculas(
     @SerialName(value = "imagen")
     val imagen: String = "",
     @SerialName(value = "visualizaciones")
-    var visualizaciones: Int = 0
+    val visualizaciones: Int = 0
 )
