@@ -4,4 +4,14 @@
     <string name="inicio">Peliculas</string>
     <string name="insertar">Insertar Puntuacion</string>
     <string name="actualizar">Actualizar puntuacion</string>
+    <string name="peliculasTitulo">Javix</string>
+    <string name="peliculasActualizar">Pantalla actualizar</string>
+    <string name="peliculasInsertar">Pantalla insertar</string>
+    <string name="atras">Atrás</string>
+    <string name="puntuacion">Puntuación</string>
+    <string name="ver">Ver</string>
+    <string name="login">Login</string>
+    <string name="usuario">Usuario</string>
+    <string name="correo">Correo</string>
+    <string name="visualizaciones">Visualizaciones</string>
 </resources>
