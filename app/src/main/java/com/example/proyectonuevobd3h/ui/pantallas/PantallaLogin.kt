@@ -41,7 +41,7 @@ fun PantallaLogin(
         is PeliculasUIState.Cargando ->  PantallaCargando(modifier = Modifier.fillMaxWidth())
         is PeliculasUIState.Error ->  PantallaError(modifier = Modifier.fillMaxWidth())
         is PeliculasUIState.ObtenerExitoUsuario -> usuarios = appUIState.usuario
-        is PeliculasUIState.ObtenerExitoPeliculas -> onUsuariosObtenidos()
+        
         else ->{
 
         }
@@ -67,7 +67,11 @@ fun PantallaLogin(
         Spacer(modifier= Modifier.height(16.dp))
 
         Button(
-            onClick = { onLoginPulsado() }
+            onClick = { onLoginPulsado() },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+
+
         ) {
             Text(stringResource(R.string.login),
                 style = TextStyle(fontSize = 20.sp),

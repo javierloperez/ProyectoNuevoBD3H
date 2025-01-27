@@ -17,6 +17,8 @@ interface PeliculasServicioApi {
         @Path("id") id: String,
         @Body peliculas: Peliculas
     ): Peliculas
+
+
 }
 
 interface UsuarioServicioApi {

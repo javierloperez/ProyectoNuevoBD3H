@@ -23,7 +23,6 @@ import java.io.IOException
 sealed interface PeliculasUIState {
 
     data class ObtenerExitoPeliculas(val peliculas: List<Peliculas>) : PeliculasUIState
-    data class ActualizarExitoPelicula(val peliculas: Peliculas) : PeliculasUIState
     data class ObtenerExitoUsuario(val usuario: List<Usuario>) : PeliculasUIState
 
 
@@ -64,9 +63,10 @@ class PeliculasViewModel(
     var peliculaPulsada: Peliculas by mutableStateOf(Peliculas("", "", "", "", "", 0))
         private set
 
-    fun actualizarPeliculaPulsada(visualizaciones:Int) {
-        peliculaPulsada = peliculaPulsada.copy(
-            visualizaciones = visualizaciones
+    fun actualizarPeliculaPulsada(peliculas: Peliculas, ) {
+        peliculaPulsada = peliculas
+        peliculaPulsada= peliculaPulsada.copy(
+            visualizaciones = peliculaPulsada.visualizaciones+1
         )
         actualizarPelicula(peliculaPulsada.id,peliculaPulsada)
     }
@@ -118,7 +118,7 @@ class PeliculasViewModel(
                     id = id,
                     peliculas = peliculas
                 )
-                PeliculasUIState.ActualizarExitoPelicula(peliculaActualizada)
+                PeliculasUIState.ActualizarExito
             } catch (e: Exception) {
                 PeliculasUIState.Error
             }
@@ -142,7 +142,6 @@ class PeliculasViewModel(
                 )
                 puntuacionPulsada = puntuacionNueva
                 PuntuacionesUIState.ObtenerExitoPuntuacion(puntuacionNueva)
-
             }
 
         }

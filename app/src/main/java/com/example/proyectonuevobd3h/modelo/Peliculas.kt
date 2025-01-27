@@ -9,12 +9,12 @@ data class Peliculas(
 
     @SerialName(value = "id")
     val id: String = "",
-    @SerialName(value = "titulo")
+    @SerialName(value = "nombre")
     val titulo: String = "",
-    @SerialName(value = "duracion")
-    val duracion: String = "",
     @SerialName(value = "descripcion")
     val descripcion: String = "",
+    @SerialName(value = "duracion")
+    val duracion: String = "",
     @SerialName(value = "imagen")
     val imagen: String = "",
     @SerialName(value = "visualizaciones")

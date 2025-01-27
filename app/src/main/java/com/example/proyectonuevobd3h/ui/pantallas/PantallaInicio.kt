@@ -49,7 +49,7 @@ fun PantallaInicio(
     appUIState: PeliculasUIState,
     onPeliculasObtenidas: () -> Unit,
     modifier: Modifier = Modifier,
-    onVerPelicula: (Int) -> Unit,
+    onVerPelicula: (Peliculas) -> Unit,
     onBuscarPuntuacion: (String) -> Unit,
     puntuacionObtenida: PuntuacionPeliculas,
     onPuntuacionActualizada: (Double) -> Unit,
@@ -57,7 +57,9 @@ fun PantallaInicio(
 
 
     when (appUIState) {
-        is PeliculasUIState.Cargando -> PantallaCargando(modifier = modifier.fillMaxSize())
+        is PeliculasUIState.Cargando -> {
+            PantallaCargando(modifier = modifier.fillMaxSize())
+        }
         is PeliculasUIState.Error -> PantallaError(modifier = modifier.fillMaxWidth())
 
         is PeliculasUIState.ObtenerExitoPeliculas -> {
@@ -72,10 +74,9 @@ fun PantallaInicio(
 
         }
 
-        is PeliculasUIState.ObtenerExitoUsuario -> onPeliculasObtenidas()
-        is PeliculasUIState.ActualizarExitoPelicula -> onPeliculasObtenidas()
+        is PeliculasUIState.ActualizarExito -> onPeliculasObtenidas()
         else -> {
-            onPeliculasObtenidas()
+
         }
     }
 }
@@ -103,7 +104,7 @@ fun PantallaError(modifier: Modifier) {
 fun PantallaListarPeliculas(
     modifier: Modifier,
     listaPeliculas: List<Peliculas>,
-    onVerPelicula: (Int) -> Unit,
+    onVerPelicula: (Peliculas) -> Unit,
     onBuscarPuntuacion: (String) -> Unit,
     puntuacionObtenida: PuntuacionPeliculas,
     onPuntuacionActualizada: (Double) -> Unit,
@@ -163,7 +164,7 @@ fun dialogo(
     abrirDialogo: Boolean,
     puntuacion: PuntuacionPeliculas,
     onPuntuacionCambiada: (Double) -> Unit,
-    onVerPelicula: (Int) -> Unit,
+    onVerPelicula: (Peliculas) -> Unit,
 ) {
     val maxPuntuacion: Int = 5
 
@@ -232,7 +233,8 @@ fun dialogo(
                         .fillMaxWidth()
                 ) {
                     TextButton(onClick = {
-                        onVerPelicula(pelicula.visualizaciones + 1)
+
+                        onVerPelicula(pelicula)
                     }) {
                         Text(stringResource(R.string.ver))
                     }
